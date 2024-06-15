@@ -71,8 +71,11 @@ int __init riscv_early_of_processor_hartid(struct device_node *node, unsigned lo
 		goto old_interface;
 
 	if (IS_ENABLED(CONFIG_32BIT) && strncasecmp(isa, "rv32i", 5)) {
-		pr_warn("CPU with hartid=%lu does not support rv32i", *hart);
-		return -ENODEV;
+		pr_warn("CPU with hartid=%lu does not support rv32i, but support %s.", *hart, isa);
+		if(strncasecmp(isa, "rv64i", 5) !=0){
+			pr_warn("CPU with hartid=%lu does not support rv64i either.", *hart);
+			return -ENODEV;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_64BIT) && strncasecmp(isa, "rv64i", 5)) {
